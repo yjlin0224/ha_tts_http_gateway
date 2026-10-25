@@ -14,7 +14,7 @@
           "first_chunk_timeout": "First audio timeout"
         },
         "data_description": {
-          "name": "Only what Home Assistant shows; rename it any time. The URL starts with it in snake_case, e.g. \"My Reader\" gives /api/tts_http_gateway/my_reader_<random>, and keeps that even after a rename.",
+          "name": "Only what Home Assistant shows; rename it any time. The URL starts with it in snake_case followed by 22 random letters and digits, e.g. \"My Reader\" gives a URL ending in my_reader_ and the random part, and keeps it after a rename.",
           "engines": "Tried in the order selected. Put the fastest first and the most reliable last.",
           "language": "Language code passed to every engine, e.g. zh-TW. A request can override it with language=.",
           "rate": "A multiple of the normal speed, from 0.25 to 4; 1 is normal. Engines that can't go as far get the nearest speed they can: Azure and Edge 0.5 to 2. Leave empty for each engine's default. A request can override it with rate=.",

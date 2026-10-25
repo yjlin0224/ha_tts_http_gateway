@@ -14,7 +14,7 @@
           "first_chunk_timeout": "首段音訊逾時"
         },
         "data_description": {
-          "name": "只是 Home Assistant 顯示的名稱，隨時可以改。網址的開頭是它的 snake_case，例如「My Reader」會產生 /api/tts_http_gateway/my_reader_<隨機字串>，之後改名也不會變。",
+          "name": "只是 Home Assistant 顯示的名稱，隨時可以改。網址的開頭是它的 snake_case，後面接 22 個隨機英數字，例如「My Reader」會產生結尾是 my_reader_ 加上隨機字串的網址，之後改名也不會變。",
           "engines": "依選擇的順序嘗試。最快的放第一個，最可靠的放最後。",
           "language": "傳給每個引擎的語言代碼，例如 zh-TW。請求可以用 language= 覆蓋。",
           "rate": "正常速度的倍數，0.25～4，1 是正常。引擎做不到時會用它最接近的速度：Azure 和 Edge 是 0.5～2。留空就用各引擎的預設值。請求可以用 rate= 覆蓋。",
