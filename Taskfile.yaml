@@ -1,0 +1,86 @@
+# Python tools run through uv (pyproject.toml); Node tools come from package.json (pnpm install).
+# Home Assistant doesn't run on Windows, so on Windows the tests run in WSL with their own virtual
+# environment, which can't share .venv with Windows.
+version: '3'
+
+vars:
+  NAME: ha_tts_http_gateway
+
+tasks:
+  default:
+    desc: List the tasks
+    silent: true
+    cmds:
+      - task --list
+
+  fmt:
+    desc: Format the code with isort and black (pyproject.toml)
+    cmds:
+      - uv run isort .
+      - uv run black .
+
+  lint:
+    desc: Check the formatting without changing anything
+    cmds:
+      - uv run isort --check-only --diff .
+      - uv run black --check .
+
+  test:
+    desc: Run the tests with pytest; pass pytest options after --, e.g. task test -- -k view
+    cmds:
+      - cmd:
+          wsl.exe --cd "{{.ROOT_DIR}}" --exec bash -lc
+          'UV_PROJECT_ENVIRONMENT="$HOME/.cache/uv-venvs/{{.NAME}}" uv run pytest {{.CLI_ARGS}}'
+        platforms: [windows]
+      - cmd: uv run pytest {{.CLI_ARGS}}
+        platforms: [linux, darwin]
+
+  spell:
+    desc: Check spelling with cspell (also run by the pre-commit hook)
+    cmds:
+      - pnpm run spell
+
+  release:check:
+    desc: Check that manifest.json and pyproject.toml have the same version
+    cmds:
+      - uv run python scripts/check_version.py {{.VERSION}}
+
+  release:snapshot:
+    desc:
+      Build dist/tts_http_gateway.zip and preview the release notes of the unreleased commits,
+      without publishing
+    cmds:
+      - task: release:check
+      - uv run python scripts/package.py
+      - pnpm exec git-cliff --unreleased --output dist/RELEASE_NOTES.md
+      - echo "Release notes in dist/RELEASE_NOTES.md"
+
+  # GitHub Flow has no release branch: a release is a signed tag on main, and pushing it runs
+  # .github/workflows/release.yaml.
+  release:
+    desc:
+      Check main, then tag it as vVERSION (signed) and push the tag to publish a GitHub release,
+      e.g. task release VERSION=0.1.0
+    requires:
+      vars: [VERSION]
+    preconditions:
+      - sh: '[[ "{{.VERSION}}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]'
+        msg: VERSION must be X.Y.Z without a leading v, e.g. VERSION=0.1.0
+      - sh: '[ "$(git branch --show-current)" = main ]'
+        msg: Releases are tagged on main; switch to main first
+      - sh: '[ -z "$(git status --porcelain)" ]'
+        msg: The working tree has uncommitted or untracked changes
+      - sh: git fetch --quiet origin main && [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]
+        msg: main differs from origin/main; pull or push first
+      - sh: '! git rev-parse --quiet --verify "refs/tags/v{{.VERSION}}" >/dev/null'
+        msg: Tag v{{.VERSION}} already exists locally
+      - sh: '! git ls-remote --exit-code --tags origin "refs/tags/v{{.VERSION}}" >/dev/null'
+        msg: Tag v{{.VERSION}} already exists on origin
+    cmds:
+      - task: release:check
+      - task: lint
+      - task: test
+      - task: spell
+      - task: release:snapshot
+      - git tag --sign "v{{.VERSION}}" --message "v{{.VERSION}}"
+      - git push origin "v{{.VERSION}}"

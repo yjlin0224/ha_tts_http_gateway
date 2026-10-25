@@ -1,0 +1,41 @@
+[project]
+name = "ha-tts-http-gateway"
+# Keep in sync with custom_components/tts_http_gateway/manifest.json
+version = "0.1.0"
+description = "Home Assistant integration that serves TTS over plain HTTP GET with fallback"
+readme = "README.md"
+license = "MIT"
+# Home Assistant 2026.10 needs Python 3.14.2 or newer
+requires-python = ">=3.14.2"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "black>=26.10.1",
+    "isort>=9.0.2",
+    # Pins homeassistant itself; bump together with the Home Assistant version tested against
+    "pytest-homeassistant-custom-component==0.13.375",
+    # Requirements of tts and its ffmpeg dependency, which pytest-homeassistant-custom-component
+    # doesn't pull in; keep them at the versions in their manifest.json
+    "ha-ffmpeg==3.2.2",
+    "mutagen==1.48.1",
+]
+
+[tool.uv]
+# Not a Python package: Home Assistant loads custom_components/ directly
+package = false
+
+[tool.black]
+line-length = 99
+target-version = ["py314"]
+
+[tool.isort]
+profile = "black"
+# The black profile pins this to 88, which would wrap imports narrower than code.
+line_length = 99
+known_first_party = ["custom_components"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]

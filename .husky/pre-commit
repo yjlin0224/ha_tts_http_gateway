@@ -1,0 +1,17 @@
+#!/bin/sh
+
+STAGED_FILES=$(git diff --staged --name-only --diff-filter=ACMR)
+
+if ! OUTPUT=$(pnpm run spell 2>&1); then
+    echo "cspell error occurred"
+    echo "$OUTPUT"
+    exit 1
+fi
+
+if echo "$STAGED_FILES" | grep -q "\(\.py\|^pyproject\.toml\)$"; then
+    if ! OUTPUT=$(uv run isort --check-only --diff . 2>&1 && uv run black --check . 2>&1); then
+        echo "isort/black error occurred (run task fmt)"
+        echo "$OUTPUT"
+        exit 1
+    fi
+fi

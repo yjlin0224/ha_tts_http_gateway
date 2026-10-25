@@ -1,0 +1,52 @@
+version: 0.2
+language: en
+ignorePaths:
+  - uv.lock
+  - pnpm-lock.yaml
+  - custom_components/tts_http_gateway/translations/zh-Hant.json
+words:
+  - aclose
+  - anext
+  - astral
+  - asyncio
+  - autouse
+  - beecho
+  - commitlint
+  - commitlintrc
+  - conftest
+  - eastasia
+  - endfor
+  - fcntl
+  - ffmpeg
+  - gitflow
+  - gname
+  - goerkasch
+  - gpgsign
+  - hacs
+  - haffmpeg
+  - hass
+  - hassfest
+  - homeassistant
+  - hsiaochen
+  - isort
+  - jing
+  - kokoro
+  - mdi
+  - mutagen
+  - pajeronda
+  - prosody
+  - pycache
+  - pyproject
+  - pytest
+  - romanizes
+  - sfortis
+  - slugify
+  - striptags
+  - taskfile
+  - testpaths
+  - tomllib
+  - unrecorded
+  - venv
+  - venvs
+  - wavenet
+  - yjlin

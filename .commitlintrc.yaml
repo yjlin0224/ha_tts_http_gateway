@@ -1,0 +1,11 @@
+# Conventional Commits with the Angular types (build, chore, ci, docs, feat, fix, perf, refactor,
+# revert, style, test). The types say what a change is, not which files it touches: style is only
+# formatting that leaves the meaning unchanged (black, isort), never a visual or behavior change.
+extends:
+  - '@commitlint/config-conventional'
+rules:
+  # One integration, so a scope would never say anything
+  scope-empty: [2, always]
+  # Every commit says what changed and why in a body
+  body-empty: [2, never]
+  header-max-length: [2, always, 72]

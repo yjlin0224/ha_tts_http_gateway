@@ -1,0 +1,18 @@
+{
+  "name": "ha_tts_http_gateway",
+  "description": "Home Assistant integration that serves TTS over plain HTTP GET with fallback",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@12.8.2",
+  "scripts": {
+    "prepare": "husky",
+    "spell": "cspell lint --words-only --unique --dot --gitignore \"**/*.{py,md,yaml,json,toml}\""
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "cspell": "^10.4.0",
+    "git-cliff": "2.14.2",
+    "husky": "^9.1.7"
+  }
+}
