@@ -1,0 +1,21 @@
+[gitflow]
+	version = 1.0
+	initialized = true
+[gitflow "branch.main"]
+	type = base
+	upstreamStrategy = none
+	downstreamStrategy = none
+	autoUpdate = false
+	tag = false
+[gitflow "branch.feature"]
+	type = topic
+	parent = main
+	startPoint = main
+	upstreamStrategy = merge
+	downstreamStrategy = rebase
+	prefix = feature/
+	autoUpdate = false
+	tag = false
+[gitflow "feature.finish"]
+	keep = true
+	push = true

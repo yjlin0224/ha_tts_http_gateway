@@ -1,0 +1,29 @@
+{
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.venv/": true,
+    "**/__pycache__/": true
+  },
+  "isort.args": ["--settings-path", "${workspaceFolder}/pyproject.toml"],
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python",
+  "python.autoComplete.extraPaths": [".venv/Lib/site-packages"],
+  "python.analysis.extraPaths": [".venv/Lib/site-packages"],
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportGeneralTypeIssues": "warning",
+    "reportMissingTypeStubs": "information",
+    "reportUnknownArgumentType": "information",
+    "reportUnknownLambdaType": "information",
+    "reportUnknownMemberType": "information",
+    "reportUnknownVariableType": "information"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.rulers": [72, 79, 99],
+    "editor.tabSize": 4,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  }
+}
