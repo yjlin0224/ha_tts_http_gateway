@@ -1,0 +1,89 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TTS HTTP Gateway",
+        "description": "Serves the selected TTS engines at a URL generated from the name and a random string. Each request goes to the first engine; when it fails or doesn't start producing audio in time, the next one takes over.",
+        "data": {
+          "name": "Name",
+          "engines": "Engines",
+          "language": "Language",
+          "rate": "Speech rate",
+          "pitch": "Pitch",
+          "volume": "Volume",
+          "first_chunk_timeout": "First audio timeout"
+        },
+        "data_description": {
+          "name": "Only what Home Assistant shows; rename it any time. The URL starts with it in snake_case, e.g. \"My Reader\" gives /api/tts_http_gateway/my_reader_<random>, and keeps that even after a rename.",
+          "engines": "Tried in the order selected. Put the fastest first and the most reliable last.",
+          "language": "Language code passed to every engine, e.g. zh-TW. A request can override it with language=.",
+          "rate": "A multiple of the normal speed, from 0.25 to 4; 1 is normal. Engines that can't go as far get the nearest speed they can: Azure and Edge 0.5 to 2. Leave empty for each engine's default. A request can override it with rate=.",
+          "pitch": "Semitones up or down, from -20 to 20; 0 is normal. Edge only takes Hz, so it gets an approximation that fits a female voice. Leave empty for each engine's default. A request can override it with pitch=.",
+          "volume": "A percentage of the normal volume, from 0 to 100; 100 is normal, which is already the loudest for Azure and Edge. Azure Speech TTS doesn't take a volume yet, so only Edge TTS changes it. Leave empty for each engine's default. A request can override it with volume=.",
+          "first_chunk_timeout": "How long an engine may take to produce its first audio before the next engine is tried. The last engine always gets at least 30 seconds."
+        }
+      },
+      "voices": {
+        "title": "Voices",
+        "description": "The voice of each engine, by its entity ID: voice names differ between platforms, e.g. zh-TW-HsiaoChenNeural on Azure and Edge, cmn-TW-Wavenet-A on Google Cloud. Pick one from the list or type a name; engines that don't list their voices, like Edge TTS, get a text field. Leave a field empty for that engine's default voice. A request's voice= replaces all of them."
+      }
+    },
+    "error": {
+      "no_name": "Enter a name.",
+      "no_engines": "Select at least one engine.",
+      "no_language": "Enter a language code.",
+      "invalid_rate": "The speech rate must be from 0.25 to 4.",
+      "invalid_pitch": "The pitch must be from -20 to 20 semitones.",
+      "invalid_volume": "The volume must be from 0 to 100%."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "TTS HTTP Gateway",
+        "description": "URL: `{path}?text=...`\n\nThe URL works without a password, so keep it secret like one. Add `voice=`, `rate=` (e.g. 1.2), `pitch=` (semitones, e.g. -2) or `volume=` (e.g. 60) to override the settings below for one request.",
+        "data": {
+          "engines": "Engines",
+          "language": "Language",
+          "rate": "Speech rate",
+          "pitch": "Pitch",
+          "volume": "Volume",
+          "first_chunk_timeout": "First audio timeout",
+          "regenerate_endpoint": "Generate a new URL"
+        },
+        "data_description": {
+          "engines": "Tried in the order selected. Put the fastest first and the most reliable last.",
+          "language": "Language code passed to every engine, e.g. zh-TW. A request can override it with language=.",
+          "rate": "A multiple of the normal speed, from 0.25 to 4; 1 is normal. Engines that can't go as far get the nearest speed they can: Azure and Edge 0.5 to 2. Leave empty for each engine's default. A request can override it with rate=.",
+          "pitch": "Semitones up or down, from -20 to 20; 0 is normal. Edge only takes Hz, so it gets an approximation that fits a female voice. Leave empty for each engine's default. A request can override it with pitch=.",
+          "volume": "A percentage of the normal volume, from 0 to 100; 100 is normal, which is already the loudest for Azure and Edge. Azure Speech TTS doesn't take a volume yet, so only Edge TTS changes it. Leave empty for each engine's default. A request can override it with volume=.",
+          "first_chunk_timeout": "How long an engine may take to produce its first audio before the next engine is tried. The last engine always gets at least 30 seconds.",
+          "regenerate_endpoint": "For when the URL leaked. The new URL starts with the current name; the old one stops working immediately, so update it wherever it's used."
+        }
+      },
+      "voices": {
+        "title": "Voices",
+        "description": "The voice of each engine, by its entity ID: voice names differ between platforms, e.g. zh-TW-HsiaoChenNeural on Azure and Edge, cmn-TW-Wavenet-A on Google Cloud. Pick one from the list or type a name; engines that don't list their voices, like Edge TTS, get a text field. Leave a field empty for that engine's default voice. A request's voice= replaces all of them."
+      }
+    },
+    "error": {
+      "no_engines": "Select at least one engine.",
+      "no_language": "Enter a language code.",
+      "invalid_rate": "The speech rate must be from 0.25 to 4.",
+      "invalid_pitch": "The pitch must be from -20 to 20 semitones.",
+      "invalid_volume": "The volume must be from 0 to 100%."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_engine": {
+        "name": "Last engine"
+      }
+    },
+    "text": {
+      "voice": {
+        "name": "{engine} voice"
+      }
+    }
+  }
+}

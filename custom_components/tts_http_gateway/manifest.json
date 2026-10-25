@@ -1,0 +1,13 @@
+{
+  "domain": "tts_http_gateway",
+  "name": "TTS HTTP Gateway",
+  "codeowners": ["@yjlin0224"],
+  "config_flow": true,
+  "dependencies": ["http", "tts"],
+  "documentation": "https://github.com/yjlin0224/ha_tts_http_gateway",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/yjlin0224/ha_tts_http_gateway/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

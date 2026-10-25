@@ -1,0 +1,6 @@
+{
+  "name": "TTS HTTP Gateway",
+  "homeassistant": "2026.10.0",
+  "zip_release": true,
+  "filename": "tts_http_gateway.zip"
+}

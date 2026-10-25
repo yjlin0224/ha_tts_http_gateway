@@ -1,0 +1,89 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TTS HTTP Gateway",
+        "description": "用名稱加上一串隨機字串產生網址，在那裡提供所選的 TTS 引擎。每個請求先交給第一個引擎；它失敗或沒有及時開始產生音訊時，改由下一個引擎接手。",
+        "data": {
+          "name": "名稱",
+          "engines": "引擎",
+          "language": "語言",
+          "rate": "語速",
+          "pitch": "音高",
+          "volume": "音量",
+          "first_chunk_timeout": "首段音訊逾時"
+        },
+        "data_description": {
+          "name": "只是 Home Assistant 顯示的名稱，隨時可以改。網址的開頭是它的 snake_case，例如「My Reader」會產生 /api/tts_http_gateway/my_reader_<隨機字串>，之後改名也不會變。",
+          "engines": "依選擇的順序嘗試。最快的放第一個，最可靠的放最後。",
+          "language": "傳給每個引擎的語言代碼，例如 zh-TW。請求可以用 language= 覆蓋。",
+          "rate": "正常速度的倍數，0.25～4，1 是正常。引擎做不到時會用它最接近的速度：Azure 和 Edge 是 0.5～2。留空就用各引擎的預設值。請求可以用 rate= 覆蓋。",
+          "pitch": "升降幾個半音，-20～20，0 是正常。Edge 只接受 Hz，所以會換算成適合女聲的近似值。留空就用各引擎的預設值。請求可以用 pitch= 覆蓋。",
+          "volume": "正常音量的百分比，0～100，100 是正常；Azure 和 Edge 的正常音量就已經是最大聲。Azure Speech TTS 目前還不支援音量，所以只有 Edge TTS 會改變。留空就用各引擎的預設值。請求可以用 volume= 覆蓋。",
+          "first_chunk_timeout": "引擎產生第一段音訊的時間上限，超過就改試下一個引擎。最後一個引擎至少有 30 秒。"
+        }
+      },
+      "voices": {
+        "title": "聲音",
+        "description": "每個引擎的聲音，欄位名稱是它的實體 ID。不同平台的聲音名稱不一樣，例如 Azure 和 Edge 是 zh-TW-HsiaoChenNeural，Google Cloud 是 cmn-TW-Wavenet-A。可以從清單選，也可以自己輸入；不提供聲音清單的引擎（例如 Edge TTS）會顯示文字欄位。留空就用那個引擎的預設聲音。請求的 voice= 會取代所有引擎的聲音。"
+      }
+    },
+    "error": {
+      "no_name": "請輸入名稱。",
+      "no_engines": "至少選擇一個引擎。",
+      "no_language": "請輸入語言代碼。",
+      "invalid_rate": "語速要在 0.25～4 之間。",
+      "invalid_pitch": "音高要在 -20～20 個半音之間。",
+      "invalid_volume": "音量要在 0～100% 之間。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "TTS HTTP Gateway",
+        "description": "網址：`{path}?text=...`\n\n知道網址就能使用，請像密碼一樣保密。加上 `voice=`、`rate=`（例如 1.2）、`pitch=`（半音，例如 -2）或 `volume=`（例如 60）可以在單次請求覆蓋下面的設定。",
+        "data": {
+          "engines": "引擎",
+          "language": "語言",
+          "rate": "語速",
+          "pitch": "音高",
+          "volume": "音量",
+          "first_chunk_timeout": "首段音訊逾時",
+          "regenerate_endpoint": "產生新的網址"
+        },
+        "data_description": {
+          "engines": "依選擇的順序嘗試。最快的放第一個，最可靠的放最後。",
+          "language": "傳給每個引擎的語言代碼，例如 zh-TW。請求可以用 language= 覆蓋。",
+          "rate": "正常速度的倍數，0.25～4，1 是正常。引擎做不到時會用它最接近的速度：Azure 和 Edge 是 0.5～2。留空就用各引擎的預設值。請求可以用 rate= 覆蓋。",
+          "pitch": "升降幾個半音，-20～20，0 是正常。Edge 只接受 Hz，所以會換算成適合女聲的近似值。留空就用各引擎的預設值。請求可以用 pitch= 覆蓋。",
+          "volume": "正常音量的百分比，0～100，100 是正常；Azure 和 Edge 的正常音量就已經是最大聲。Azure Speech TTS 目前還不支援音量，所以只有 Edge TTS 會改變。留空就用各引擎的預設值。請求可以用 volume= 覆蓋。",
+          "first_chunk_timeout": "引擎產生第一段音訊的時間上限，超過就改試下一個引擎。最後一個引擎至少有 30 秒。",
+          "regenerate_endpoint": "網址外流時使用。新網址以目前的名稱開頭；舊網址會立即失效，所有用到它的地方都要更新。"
+        }
+      },
+      "voices": {
+        "title": "聲音",
+        "description": "每個引擎的聲音，欄位名稱是它的實體 ID。不同平台的聲音名稱不一樣，例如 Azure 和 Edge 是 zh-TW-HsiaoChenNeural，Google Cloud 是 cmn-TW-Wavenet-A。可以從清單選，也可以自己輸入；不提供聲音清單的引擎（例如 Edge TTS）會顯示文字欄位。留空就用那個引擎的預設聲音。請求的 voice= 會取代所有引擎的聲音。"
+      }
+    },
+    "error": {
+      "no_engines": "至少選擇一個引擎。",
+      "no_language": "請輸入語言代碼。",
+      "invalid_rate": "語速要在 0.25～4 之間。",
+      "invalid_pitch": "音高要在 -20～20 個半音之間。",
+      "invalid_volume": "音量要在 0～100% 之間。"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_engine": {
+        "name": "最後使用的引擎"
+      }
+    },
+    "text": {
+      "voice": {
+        "name": "{engine} 聲音"
+      }
+    }
+  }
+}

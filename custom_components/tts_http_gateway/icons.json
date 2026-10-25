@@ -1,0 +1,14 @@
+{
+  "entity": {
+    "sensor": {
+      "last_engine": {
+        "default": "mdi:account-voice"
+      }
+    },
+    "text": {
+      "voice": {
+        "default": "mdi:account-music"
+      }
+    }
+  }
+}
