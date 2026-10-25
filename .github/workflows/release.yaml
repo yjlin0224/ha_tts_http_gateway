@@ -1,0 +1,101 @@
+# Push a tag like v0.1.0 (task release VERSION=0.1.0) to zip the integration and publish it as a
+# GitHub release, which HACS installs from. The checks run first, so a tag pushed by hand can't
+# skip them.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check that the tag is on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - uses: astral-sh/setup-uv@v10.3.2
+
+      - run: uv sync --locked
+
+      - name: Check that the tag matches manifest.json and pyproject.toml
+        run: uv run python scripts/check_version.py "${GITHUB_REF_NAME#v}"
+
+      - run: uv run isort --check-only --diff .
+
+      - run: uv run black --check .
+
+      - run: uv run pytest
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run spell
+
+      - uses: home-assistant/actions/hassfest@master
+
+      - uses: hacs/action@22.5.0
+        with:
+          category: integration
+          # Only integrations in the default HACS store need an entry in home-assistant/brands
+          ignore: brands
+
+  release:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # git-cliff needs the history to write the release notes
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v10.3.2
+
+      - run: uv run --no-project python scripts/package.py
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The README links point at this tag, so they describe this release rather than main.
+      - name: Write the release notes
+        run: |
+          url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME"
+          {
+            echo "## Files"
+            echo
+            echo "| File | Contents |"
+            echo "| ---- | -------- |"
+            echo "| \`tts_http_gateway.zip\` | The integration, which HACS installs; without HACS, extract it to \`custom_components/tts_http_gateway\` |"
+            echo
+            echo "See the [README]($url/README.md) ([繁體中文]($url/README.zh-Hant.md)) for installation, configuration and usage."
+            echo
+            pnpm exec git-cliff --latest --strip all
+          } > dist/RELEASE_NOTES.md
+
+      - name: Publish the release
+        run:
+          gh release create "$GITHUB_REF_NAME" dist/tts_http_gateway.zip --verify-tag
+          --title "$GITHUB_REF_NAME" --notes-file dist/RELEASE_NOTES.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
